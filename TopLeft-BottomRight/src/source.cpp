@@ -2,12 +2,14 @@
 #include <vector>
 #include <map>
 #include <climits>
+#include <queue>
 using std::cout;
 using std::vector;
 using std::make_pair;
 using std::pair;
 using std::multimap;
 using std::map;
+using std::queue;
 static vector<pair<int, int>> direction = { make_pair( 0,  1),
 											make_pair( 0, -1),
 											make_pair( 1,  0),
@@ -118,7 +120,33 @@ void findallpath(vector <vector <int>>& arr, multimap<int, vector<pair<int, int>
 	}
 	findallpathutil(arr, visited, 0, 0, result, output);
 }
-
+bool isPath(vector<vector<int>> &arr)
+{
+	queue<pair<int,int>> myqueue;
+	vector<vector<int>> visited(arr.size(), vector<int>(arr[0].size(), 0));
+	myqueue.push(make_pair(0, 0));
+	while (!myqueue.empty())
+	{
+		pair<int, int> node = myqueue.front();
+		myqueue.pop();
+		visited[node.first][node.second] = 1;
+		if ((node.first == arr.size() - 1) && (node.second == arr[arr.size() - 1].size() - 1))
+			return true;
+		for (int index = 0; index < direction.size(); index++)
+		{
+			pair<int,int> data(node.first + direction[index].first , node.second + direction[index].second);
+			if ((data.first < 0) || (data.second < 0) ||
+				(data.first >= arr.size()) || (data.second >= arr[arr.size() - 1].size())||
+				(arr[data.first][data.second] == 0) || (visited[data.first][data.second] == 1))
+			{
+			}
+			else {
+				myqueue.push(data);
+			}				
+		}
+	}
+	return false;
+}
 
 int main()
 {
@@ -128,74 +156,82 @@ int main()
 	map<int, vector<pair<int, int>>> output2;
 	multimap<int, vector<pair<int, int>>> output3;
 	map<int, vector<pair<int, int>>> output4;
-
-	findallpath(myvec, output1);
-	if (output1.size())
-	{
-		cout << "Paths are " << std::endl;
-		for (auto rVec : output1)
-		{
-			cout << "Size is " << rVec.first << " -> ";
-			for (auto r : rVec.second)
+	if (isPath(myvec)){
+		findallpath(myvec, output1);
+			if (output1.size())
 			{
-				//cout << "(" << r.first << "," << r.second << ") ";
-				cout << myvec[r.first][r.second] << " ";
+				cout << "Paths are " << std::endl;
+					for (auto rVec : output1)
+					{
+						cout << "Size is " << rVec.first << " -> ";
+							for (auto r : rVec.second)
+							{
+								//cout << "(" << r.first << "," << r.second << ") ";
+								cout << myvec[r.first][r.second] << " ";
+							}
+						cout << std::endl;
+					}
+				cout << std::endl;
+			}
+		findshortestpath(myvec, output2);
+		if (output2.size())
+		{
+			cout << "Shortest Path is  " << std::endl;
+			for (auto rVec : output2)
+			{
+				cout << "Size is " << rVec.first << " -> ";
+				for (auto r : rVec.second)
+				{
+					//cout << "(" << r.first << "," << r.second << ") ";
+					cout << myvec[r.first][r.second] << " ";
+				}
+				cout << std::endl;
 			}
 			cout << std::endl;
 		}
-		cout << std::endl;
-	}
-	findshortestpath(myvec, output2);
-	if (output2.size())
-	{
-		cout << "Shortest Path is  " << std::endl;
-		for (auto rVec : output2)
-		{
-			cout << "Size is " << rVec.first << " -> ";
-			for (auto r : rVec.second)
-			{
-				//cout << "(" << r.first << "," << r.second << ") ";
-				cout << myvec[r.first][r.second] << " ";
-			}
-			cout << std::endl;
-		}
-		cout << std::endl;
 	}
 	myvec = { {1,2,3},
 			  {4,5,6},
 			  {7,8,9}};
-	findallpath(myvec, output3);
-	if (output3.size())
-	{
-		cout << "Paths are " << std::endl;
-		for (auto rVec : output3)
+	if(isPath(myvec)) {
+		findallpath(myvec, output3);
+		if (output3.size())
 		{
-			cout << "Size is " << rVec.first << " -> ";
-			for (auto r : rVec.second)
+			cout << "Paths are " << std::endl;
+			for (auto rVec : output3)
 			{
-				//cout << "(" << r.first << "," << r.second << ") ";
-				cout << myvec[r.first][r.second] << " ";
+				cout << "Size is " << rVec.first << " -> ";
+				for (auto r : rVec.second)
+				{
+					//cout << "(" << r.first << "," << r.second << ") ";
+					cout << myvec[r.first][r.second] << " ";
+				}
+				cout << std::endl;
 			}
 			cout << std::endl;
 		}
-		cout << std::endl;
-	}
 
-	findshortestpath(myvec, output4);
-	if (output4.size())
-	{
-		cout << "Shortest Path is  " << std::endl;
-		for (auto rVec : output4)
+		findshortestpath(myvec, output4);
+		if (output4.size())
 		{
-			cout << "Size is " << rVec.first << " -> " ;
-			for (auto r : rVec.second)
+			cout << "Shortest Path is  " << std::endl;
+			for (auto rVec : output4)
 			{
-				//cout << "(" << r.first << "," << r.second << ") ";
-				cout << myvec[r.first][r.second] << " ";
+				cout << "Size is " << rVec.first << " -> ";
+				for (auto r : rVec.second)
+				{
+					//cout << "(" << r.first << "," << r.second << ") ";
+					cout << myvec[r.first][r.second] << " ";
+				}
+				cout << std::endl;
 			}
 			cout << std::endl;
 		}
-		cout << std::endl;
 	}
+	
+	myvec = { {0,1,1},
+			 {0,0,0},
+			 {0,0,0} };
+	cout <<std::boolalpha<< isPath(myvec) << std::endl;
 	return 0;
 }
